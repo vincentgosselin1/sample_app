@@ -10,7 +10,7 @@
 #  encrypted_password :string
 #  salt               :string
 #
-
+require 'digest'
 class User < ActiveRecord::Base
 
 	attr_accessor :password
@@ -36,6 +36,12 @@ class User < ActiveRecord::Base
 		# Compare encrypted_password with the encrypted version of
 		# submitted_passwords
 		encrypted_password == encrypt(submitted_password)
+	end
+
+	def self.authenticate(email, submitted_password)
+		user = find_by_email(email)
+		return nil if user.nil?
+		return user if user.has_password?(submitted_password)
 	end
 	
 	private
